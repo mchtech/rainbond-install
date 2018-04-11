@@ -81,14 +81,12 @@ function run(){
         echo "-p [Password]    The login password what you Specified node"
     else
         config_salt_master
-        check_compute
     fi
 }
 
 function check_compute(){
-
-    sed -i "s/^COMPUTE_HOSTNAME=*$/COMPUTE_HOSTNAME=$Node_name/g" ./before_install.sh
     cp ./before_install.sh /srv/salt/expand/scripts/
+    sed -i "s/^COMPUTE_HOSTNAME=*$/COMPUTE_HOSTNAME=$Node_name/g" /srv/salt/expand/scripts/before_install.sh
     salt-ssh -i "$Node_name" state.sls expand.check || exit 1
 }
 
@@ -104,11 +102,32 @@ function init_sys(){
     echo "  uuid: $compute_uuid" >> ../install/pillar/compute_info.sls
 }
 
+
+function install_compute(){
+    # 初始化用户、目录、免密...
+    salt -E "compute" state.sls init
+    # install nfs 挂载
+    salt -E "compute" state.sls storage
+    # 配置dns为manage01
+    salt -E "compute" state.sls grbase.dns
+    # 配置源、装gr-docker、dps、dc-compose
+    salt -E "compute" state.sls docker.install
+    # 安装calico
+    salt -E "compute" state.sls network
+    # 安装ercd-proxy
+    salt -E "compute" state.sls etcd.proxy
+    # 安装 node
+    # 安装 kubelet
+}
+
 # 根据参数配置roster、检查目标机器的环境、写入compute.sls
 run
 
 Master_ip=$(grep "inet-ip" ../install/pillar/system_info.sls  | awk '{print$2}')
 Node_name=$(cat /etc/salt/roster | tail -n 4 | head -1 | awk -F ':' '{print$1}')
+
+# 检查minion
+check_compute
 # 安装salt-minion
 install_minion
 # 生成uuid

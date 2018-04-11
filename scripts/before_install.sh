@@ -13,8 +13,10 @@ else
 fi
 
 function set_hostname(){
+  inet_ip=$(ip ad | grep 'inet ' | egrep ' 10.|172.|192.168' | awk '{print $2}' | cut -d '/' -f 1 | grep -v '172.30.42.1' | head -1)
   hostname $COMPUTE_HOSTNAME
-  echo $COMPUTE_HOSTNAME > /etc/hostname
+  echo "$COMPUTE_HOSTNAME" > /etc/hostname
+  echo "$inet_ip $COMPUTE_HOSTNAME" >> /etc/hosts
 }
 
 # check net

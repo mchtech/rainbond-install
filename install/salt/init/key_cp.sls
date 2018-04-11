@@ -18,6 +18,7 @@ key_cp:
     - name: cat /tmp/id_rsa.pub >> /root/.ssh/authorized_keys
 {% endif %}
 
+{% if "manage" in grains['host'] %}
 key_rsa_ssh:
   file.managed:
     - source: salt://init/files/id_rsa
@@ -62,4 +63,4 @@ key_config:
     - group: root
     - mode: 600
     - makedirs: Ture
-    
+{% endif %}

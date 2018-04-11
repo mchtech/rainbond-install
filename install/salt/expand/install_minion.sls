@@ -7,7 +7,7 @@ minion_bootstrap:
     - mode: 644
 minion_install:
   cmd.run:
-    - name: bash /tmp/bootstrap-salt.sh -P
+    - name: bash /tmp/bootstrap-salt.sh -P -R mirrors.ustc.edu.cn/salt
 minion_conf:
   file.managed:
     - name: /etc/salt/minion.d/minion.conf

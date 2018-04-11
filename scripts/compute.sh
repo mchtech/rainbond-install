@@ -9,7 +9,7 @@ salt -E "compute" state.sls storage
 
 salt -E "compute" state.sls grbase.dns
 
-salt -E "compute" state.sls docker
+salt -E "compute" state.sls docker.install
 
 salt -E "compute" state.sls network
 

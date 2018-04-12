@@ -16,8 +16,6 @@ minion_conf:
     - group: root
     - mode: 644
     - template: jinja
-    - defaults:
-      minion_id: {{ grains['host'] }}
     - require:
       - cmd: minion_install
 minion_service:

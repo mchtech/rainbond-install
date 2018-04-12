@@ -25,7 +25,6 @@ k8s-conf:
     - makedirs: Ture
     - template: jinja
 
-{% if "manage" in grains['host'] %}
 kubelet-ssl-rsync:
   file.recurse:
     - source: salt://kubernetes/server/install/ssl
@@ -35,8 +34,6 @@ kubelet-cfg-rsync:
   file.recurse:
     - source: salt://kubernetes/server/install/kubecfg
     - name: {{ pillar['rbd-path'] }}/kubernetes/kubecfg
-
-{% endif %}
 
 kubelet-cni:
   file.recurse:
@@ -49,6 +46,9 @@ kubelet-cni-bin:
   file.recurse:
     - source: salt://misc/file/cni/bin
     - name: {{ pillar['rbd-path'] }}/cni/bin
+    - file_mode: '0755'
+    - user: root
+    - group: root
     - makedirs: Ture
 
 /etc/systemd/system/kubelet.service:

@@ -17,5 +17,6 @@ include:
   - init.service
   - init.key_cp
   - init.router
+  - init.plugins
 {% endif %}
 

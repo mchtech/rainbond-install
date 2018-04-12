@@ -1,7 +1,18 @@
+{% set path = pillar['rbd-path'] %}
+env-script:
+  file.managed:
+    - source: salt://node/install/scripts/node.sh
+    - name: {{ path }}/etc/envs/node.sh
+    - makedirs: Ture
+    - template: jinja
+    - mode: 755
+    - user: root
+    - group: root
+  
 node-script:
   file.managed:
     - source: salt://node/install/scripts/start.sh
-    - name: {{ pillar['rbd-path'] }}/node/scripts/start.sh
+    - name: {{ path }}/node/scripts/start.sh
     - makedirs: Ture
     - template: jinja
     - mode: 755
@@ -11,7 +22,7 @@ node-script:
 node-config-mapper.yaml:
   file.managed:
     - source: salt://node/install/config/mapper.yaml
-    - name: {{ pillar['rbd-path'] }}/node/config/mapper.yml
+    - name: {{ path }}/node/config/mapper.yml
     - makedirs: Ture
     - template: jinja
 
@@ -25,7 +36,7 @@ node-config-mapper.yaml:
 node-uuid-conf:
   file.managed:
     - source: salt://node/install/envs/node_host_uuid.conf
-    - name: {{ pillar['rbd-path'] }}/etc/node/node_host_uuid.conf
+    - name: {{ path }}/etc/node/node_host_uuid.conf
     - makedirs: Ture
     - template: jinja
 
@@ -35,5 +46,6 @@ node:
   cmd.run:
     - name: systemctl restart node
     - watch:
-      - file: {{ pillar['rbd-path'] }}/node/scripts/start.sh
-      - file: {{ pillar['rbd-path'] }}/etc/node/node_host_uuid.conf
+      - file: {{ path }}/etc/envs/node.sh
+      - file: {{ path }}/node/scripts/start.sh
+      - file: {{ path }}/etc/node/node_host_uuid.conf

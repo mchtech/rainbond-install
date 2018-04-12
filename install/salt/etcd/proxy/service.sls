@@ -1,13 +1,14 @@
+{% set path = pillar['rbd-path'] %}
 {% if pillar.etcd.proxy.enabled %}
 
 pull-etcd-proxy-image:
   cmd.run:
-    - name: docker pull {{ server.get('image', 'rainbond/etcd:v3.2.13') }}
+    - name: docker pull {{ pillar.etcd.server.get('image', 'rainbond/etcd:v3.2.13') }}
 
 etcd-proxy-env:
   file.managed:
     - source: salt://etcd/install/envs/petcd.sh
-    - name: {{ pillar['rbd-path'] }}/etc/envs/petcd.sh
+    - name: {{ path }}/etc/envs/petcd.sh
     - template: jinja
     - makedirs: Ture
     - mode: 644
@@ -17,7 +18,7 @@ etcd-proxy-env:
 etcd-proxy-script:
   file.managed:
     - source: salt://etcd/install/scripts/start-proxy.sh
-    - name: {{ pillar['rbd-path'] }}/petcd/scripts/start.sh
+    - name: {{ path }}/petcd/scripts/start-proxy.sh
     - makedirs: Ture
     - template: jinja
     - mode: 755
@@ -36,8 +37,8 @@ etcd-proxy:
     - enable: True
     - reload: True
     - watch:
-      - file: {{ pillar['rbd-path'] }}/petcd/scripts/start.sh
-      - file: {{ pillar['rbd-path'] }}/etc/envs/petcd.sh
+      - file: {{ path }}/petcd/scripts/start-proxy.sh
+      - file: {{ path }}/etc/envs/petcd.sh
       - cmd: pull-etcd-proxy-image
 
 {% endif %}

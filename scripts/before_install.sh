@@ -1,5 +1,5 @@
 #!/bin/bash
-COMPUTE_HOSTNAME=
+NODE_HOSTNAME=
 SYS_NAME=$(grep "^ID=" /etc/os-release | awk -F = '{print $2}'|sed 's/"//g')
 SYS_VER=$(grep "^VERSION_ID=" /etc/os-release | awk -F = '{print $2}'|sed 's/"//g')
 CPU_NUM=$(grep "processor" /proc/cpuinfo | wc -l )
@@ -14,9 +14,9 @@ fi
 
 function set_hostname(){
   inet_ip=$(ip ad | grep 'inet ' | egrep ' 10.|172.|192.168' | awk '{print $2}' | cut -d '/' -f 1 | grep -v '172.30.42.1' | head -1)
-  hostname $COMPUTE_HOSTNAME
-  echo "$COMPUTE_HOSTNAME" > /etc/hostname
-  echo "$inet_ip $COMPUTE_HOSTNAME" >> /etc/hosts
+  hostname $NODE_HOSTNAME
+  echo "$NODE_HOSTNAME" > /etc/hostname
+  echo "$inet_ip $NODE_HOSTNAME" >> /etc/hosts
 }
 
 # check net
@@ -107,16 +107,7 @@ function check_netcard_base(){
   fi
 }
 
-
-function pre_config_minion(){
-  
-cat > /tmp/minion.conf <<EOF
-master:
-id:
-EOF
-}
-
-set_hostname && echo "hostname is set to $COMPUTE_HOSTNAME"
+set_hostname && echo "hostname is set to $NODE_HOSTNAME"
 
 net_test && echo "net is ok"
 
@@ -127,6 +118,3 @@ check_hardware && echo "cpu、mem is ok"
 check_docker && echo "docker isn't install"
 
 check_netcard && echo "there is static card and no dns config"
-# write_uuid && echo "write is ok"
-
-pre_config_minion && echo "pre_config_minion is ok"

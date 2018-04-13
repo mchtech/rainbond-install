@@ -13,7 +13,7 @@ KUBE_APISERVER_OPTS="--insecure-bind-address=127.0.0.1 \
 --client-ca-file={{ pillar['rbd-path'] }}/kubernetes/ssl/ca.pem \
 --service-account-key-file={{ pillar['rbd-path'] }}/kubernetes/ssl/ca-key.pem \
 --logtostderr=true \
---service-cluster-ip-range=11.1.0.0/16"
+--service-cluster-ip-range=100.64.0.0/16"
 
 
 exec /usr/bin/docker \

@@ -43,6 +43,9 @@ install_func(){
     for module in ${MANAGE_MODULES}
     do
         echo "Start install $module ..."
+	if [ "$module" == "network" ];then
+	    sleep 20
+	fi
         if ! (salt "*" state.sls $module);then
             ((fail_num+=1))
             break
